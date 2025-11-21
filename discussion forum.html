@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion Forum - Community | AgriClimate Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'agri-green': '#2F7D32',
+                        'agri-light': '#4CAF50',
+                        'agri-dark': '#1B5E20',
+                        'agri-accent': '#FF8F00',
+                        'agri-blue': '#1976D2',
+                        'agri-earth': '#8D6E63',
+                        'agri-sky': '#87CEEB',
+                        'agri-gold': '#FFD700',
+                        'agri-night': '#0F172A',
+                        'agri-night-light': '#1E293B',
+                        'agri-purple': '#7C3AED',
+                        'agri-pink': '#EC4899'
+                    },
+                    fontFamily: {
+                        'agri': ['Inter', 'Segoe UI', 'sans-serif']
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'scale-in': 'scaleIn 0.5s ease-out'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #4CAF50, 0 0 10px #4CAF50, 0 0 15px #4CAF50; }
+            to { box-shadow: 0 0 10px #4CAF50, 0 0 20px #4CAF50, 0 0 30px #4CAF50; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #2F7D32 0%, #4CAF50 50%, #81C784 100%);
+        }
+        
+        .dark .gradient-bg {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 30%, #2F7D32 70%, #4CAF50 100%);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        
+        .forum-card {
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .dark .forum-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(75, 85, 99, 0.4);
+        }
+        
+        .forum-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .dark .forum-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+        
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .dark .text-shadow {
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+        }
+        
+        .navbar-dropdown {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .navbar-item:hover .navbar-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #2F7D32, #4CAF50, #FF8F00);
+            transform-origin: left;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+        }
+        
+        .glow-on-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glow-on-hover:hover {
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+        
+        .counter {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Forum-specific styles */
+        .category-icon {
+            background: linear-gradient(135deg, var(--icon-color-1), var(--icon-color-2));
+            transition: all 0.3s ease;
+        }
+        
+        .category-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .forum-preview {
+            background: linear-gradient(135deg, rgba(47, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.05) 100%);
+            border: 1px solid rgba(47, 125, 50, 0.2);
+        }
+        
+        .dark .forum-preview {
+            background: linear-gradient(135deg, rgba(47, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%);
+            border: 1px solid rgba(47, 125, 50, 0.3);
+        }
+        
+        .user-avatar {
+            background: linear-gradient(135deg, var(--avatar-color-1), var(--avatar-color-2));
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #4CAF50, #2F7D32);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 8px 32px rgba(47, 125, 50, 0.3);
+        }
+        
+        .benefit-icon {
+            background: linear-gradient(135deg, rgba(47, 125, 50, 0.1), rgba(76, 175, 80, 0.2));
+            border: 2px solid rgba(47, 125, 50, 0.3);
+        }
+        
+        .dark .benefit-icon {
+            background: linear-gradient(135deg, rgba(47, 125, 50, 0.2), rgba(76, 175, 80, 0.3));
+            border-color: rgba(47, 125, 50, 0.4);
+        }
+        
+        /* Accessibility Enhancements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .forum-card, .glass-effect {
+                background: rgba(255, 255, 255, 1);
+                border: 2px solid #000;
+            }
+            
+            .dark .forum-card, .dark .glass-effect {
+                background: rgba(0, 0, 0, 1);
+                border: 2px solid #fff;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .dark ::-webkit-scrollbar-track {
+            background: #1E293B;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #4CAF50;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2F7D32;
+        }
+    </style>
+</head>
+<body class="font-agri bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50 dark:from-agri-night dark:via-agri-night-light dark:to-slate-900 transition-all duration-500">
+    
+    <!-- Skip to main content for screen readers -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-agri-green text-white px-4 py-2 rounded-lg z-50">
+        Skip to main content
+    </a>
+    
+    <!-- Scroll Progress Indicator -->
+    <div id="scroll-indicator" class="scroll-indicator" style="transform: scaleX(0);" role="progressbar" aria-label="Page scroll progress"></div>
+    
+    <!-- Navigation Header -->
+    <header class="fixed w-full top-0 z-50 bg-white/90 dark:bg-agri-night/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50 dark:border-gray-700/50" role="banner">
+        <nav class="container mx-auto px-4 py-3" role="navigation" aria-label="Main navigation">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-agri-green to-agri-light rounded-xl flex items-center justify-center shadow-lg glow-on-hover" role="img" aria-label="AgriClimate Connect Logo">
+                        <i class="fas fa-seedling text-white text-xl" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-agri-dark dark:text-agri-light">AgriClimate Connect</h1>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Empowering Farmers with Knowledge</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-700 dark:text-gray-300 hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="nav.home">Home</a>
+                    
+                    <!-- Knowledge Tools Dropdown -->
+                    <div class="relative navbar-item">
+                        <button class="nav-link text-gray-700 dark:text-gray-300 hover:text-agri-green dark:hover:text-agri-light transition-colors flex items-center focus:outline-none focus:ring-2 focus:ring-agri-green rounded" aria-expanded="false" aria-haspopup="true">
+                            <span data-translate="nav.knowledge_tools">Knowledge Tools</span> 
+                            <i class="fas fa-chevron-down ml-1 text-xs transition-transform" aria-hidden="true"></i>
+                        </button>
+                        <div class="navbar-dropdown absolute top-8 left-0 w-72 bg-white dark:bg-agri-night rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4" role="menu">
+                            <a href="weather and climate intelligence.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-cloud-sun mr-3 text-agri-blue" aria-hidden="true"></i><span data-translate="nav.weather_climate">Weather & Climate Intelligence</span>
+                            </a>
+                            <a href="smart crop advisory.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-seedling mr-3 text-agri-green" aria-hidden="true"></i><span data-translate="nav.crop_advisory">Smart Crop Advisory</span>
+                            </a>
+                            <a href="livestock management.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-cow mr-3 text-agri-earth" aria-hidden="true"></i><span data-translate="nav.livestock">Livestock Management</span>
+                            </a>
+                            <a href="market intelligence.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-store mr-3 text-agri-accent" aria-hidden="true"></i><span data-translate="nav.market_hub">Market Intelligence</span>
+                            </a>
+                            <a href="AI powered tools.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-robot mr-3 text-purple-500" aria-hidden="true"></i><span data-translate="nav.ai_tools">AI-Powered Tools</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Community Dropdown -->
+                    <div class="relative navbar-item">
+                        <button class="nav-link text-gray-700 dark:text-gray-300 hover:text-agri-green dark:hover:text-agri-light transition-colors flex items-center focus:outline-none focus:ring-2 focus:ring-agri-green rounded" aria-expanded="false" aria-haspopup="true">
+                            <span data-translate="nav.community">Community</span> 
+                            <i class="fas fa-chevron-down ml-1 text-xs transition-transform" aria-hidden="true"></i>
+                        </button>
+                        <div class="navbar-dropdown absolute top-8 left-0 w-64 bg-white dark:bg-agri-night rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4" role="menu">
+                            <a href="discussion forum.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-comments mr-3 text-blue-500" aria-hidden="true"></i><span data-translate="nav.forum">Discussion Forum</span>
+                            </a>
+                            <a href="knowledge center.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-book mr-3 text-orange-500" aria-hidden="true"></i><span data-translate="nav.knowledge_center">Knowledge Center</span>
+                            </a>
+                            <a href="expert network.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-user-tie mr-3 text-purple-500" aria-hidden="true"></i><span data-translate="nav.expert_network">Expert Network</span>
+                            </a>
+                            <a href="events and training.html" class="block py-2 text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem">
+                                <i class="fas fa-calendar mr-3 text-green-500" aria-hidden="true"></i><span data-translate="nav.events">Events & Training</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- About Us -->
+                    <a href="about us.html" class="nav-link text-gray-700 dark:text-gray-300 hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="nav.about">About Us</a>
+                    
+                    <!-- Contact Us -->
+                    <a href="contact us.html" class="nav-link text-gray-700 dark:text-gray-300 hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="nav.contact">Contact Us</a>
+                </div>
+
+                <!-- Right Side Controls -->
+                <div class="flex items-center space-x-4">
+                    <!-- Language Selector -->
+                    <div class="relative">
+                        <select id="language-selector" class="bg-transparent text-sm border-none focus:outline-none focus:ring-2 focus:ring-agri-green rounded cursor-pointer text-gray-700 dark:text-gray-300" aria-label="Select language">
+                            <option value="en">🇺🇸 English</option>
+                            <option value="es">🇪🇸 Español</option>
+                            <option value="fr">🇫🇷 Français</option>
+                            <option value="sw">🇰🇪 Kiswahili</option>
+                            <option value="hi">🇮🇳 हिंदी</option>
+                            <option value="pt">🇧🇷 Português</option>
+                            <option value="ar">🇸🇦 العربية</option>
+                        </select>
+                    </div>
+
+                    <!-- Accessibility Controls -->
+                    <div class="flex items-center space-x-2 border-l border-gray-300 dark:border-gray-600 pl-4">
+                        <!-- Text Size Controls -->
+                        <div class="flex items-center space-x-1" role="group" aria-label="Text size controls">
+                            <button id="decrease-text" class="text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded p-1" title="Decrease text size" aria-label="Decrease text size">
+                                <i class="fas fa-minus" aria-hidden="true"></i>
+                            </button>
+                            <span class="text-xs text-gray-400">|</span>
+                            <button id="increase-text" class="text-sm hover:text-agri-green dark:hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded p-1" title="Increase text size" aria-label="Increase text size">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                        <!-- High Contrast Toggle -->
+                        <button id="contrast-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green" title="Toggle high contrast" aria-label="Toggle high contrast mode">
+                            <i class="fas fa-adjust text-gray-600 dark:text-gray-400" aria-hidden="true"></i>
+                        </button>
+
+                        <!-- Dark Mode Toggle -->
+                        <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green glow-on-hover" title="Toggle dark mode" aria-label="Toggle dark mode">
+                            <i class="fas fa-moon dark:hidden text-gray-600" aria-hidden="true"></i>
+                            <i class="fas fa-sun hidden dark:block text-yellow-400" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <a href="signup.html"><button class="hidden md:block bg-gradient-to-r from-agri-green to-agri-light text-white px-6 py-2 rounded-full hover:shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-agri-green glow-on-hover">
+                        <span data-translate="cta.get_started">Get Started</span>
+                    </button></a>
+
+                    <!-- Hamburger Menu -->
+                    <button id="hamburger" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-agri-green" aria-label="Toggle mobile menu" aria-expanded="false">
+                        <div class="space-y-1.5">
+                            <div class="w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300 hamburger-line"></div>
+                            <div class="w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300 hamburger-line"></div>
+                            <div class="w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300 hamburger-line"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="lg:hidden hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700" role="menu">
+                <div class="space-y-2 pt-4">
+                    <a href="index.html" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.home">Home</a>
+                    
+                    <div class="py-2">
+                        <button class="w-full text-left text-gray-700 dark:text-gray-300 hover:text-agri-green transition-colors flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-agri-green rounded" onclick="toggleMobileDropdown('knowledge-tools')" aria-expanded="false">
+                            <span data-translate="nav.knowledge_tools">Knowledge Tools</span>
+                            <i class="fas fa-chevron-down transition-transform" aria-hidden="true"></i>
+                        </button>
+                        <div id="mobile-knowledge-tools" class="hidden ml-4 mt-2 space-y-1">
+                            <a href="weather and climate intelligence.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.weather_climate">Weather & Climate</a>
+                            <a href="smart crop advisory.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.crop_advisory">Crop Advisory</a>
+                            <a href="livestock management.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.livestock">Livestock Management</a>
+                            <a href="market intelligence.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.market_hub">Market Intelligence</a>
+                            <a href="AI powered tools.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.ai_tools">AI Tools</a>
+                        </div>
+                    </div>
+                    
+                    <div class="py-2">
+                        <button class="w-full text-left text-gray-700 dark:text-gray-300 hover:text-agri-green transition-colors flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-agri-green rounded" onclick="toggleMobileDropdown('community')" aria-expanded="false">
+                            <span data-translate="nav.community">Community</span>
+                            <i class="fas fa-chevron-down transition-transform" aria-hidden="true"></i>
+                        </button>
+                        <div id="mobile-community" class="hidden ml-4 mt-2 space-y-1">
+                            <a href="discussion forum.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.forum">Discussion Forum</a>
+                            <a href="knowledge center.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.knowledge_center">Knowledge Center</a>
+                            <a href="expert network.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.expert_network">Expert Network</a>
+                            <a href="events and training.html" class="block py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.events">Events & Training</a>
+                        </div>
+                    </div>
+                    
+                    <a href="about us.html" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.about">About Us</a>
+                    <a href="contact us.html" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-agri-green transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" role="menuitem" data-translate="nav.contact">Contact Us</a>
+                    
+                    <a href="signup.html"><button class="w-full mt-4 bg-gradient-to-r from-agri-green to-agri-light text-white py-2 rounded-full hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-agri-green">
+                        <span data-translate="cta.get_started">Get Started</span>
+                    </button></a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="forum-hero" class="min-h-screen pt-20 gradient-bg relative overflow-hidden" role="banner">
+            <div class="absolute inset-0 bg-black/30 dark:bg-black/50"></div>
+            
+            <!-- Floating Community Elements -->
+            <div class="absolute top-20 left-10 w-20 h-20 bg-agri-blue/20 dark:bg-agri-blue/30 rounded-full animate-float flex items-center justify-center" aria-hidden="true">
+                <i class="fas fa-comments text-agri-blue text-2xl"></i>
+            </div>
+            <div class="absolute top-40 right-20 w-16 h-16 bg-white/20 dark:bg-agri-light/30 rounded-full animate-float flex items-center justify-center" style="animation-delay: 1s;" aria-hidden="true">
+                <i class="fas fa-users text-white dark:text-agri-light text-xl"></i>
+            </div>
+            <div class="absolute bottom-20 left-1/4 w-24 h-24 bg-agri-accent/20 dark:bg-agri-accent/30 rounded-full animate-float flex items-center justify-center" style="animation-delay: 2s;" aria-hidden="true">
+                <i class="fas fa-handshake text-agri-accent text-2xl"></i>
+            </div>
+
+            <div class="container mx-auto px-4 relative z-10 min-h-screen flex items-center">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <!-- Left Content -->
+                    <div class="text-white" data-aos="fade-right">
+                        <nav class="mb-6" aria-label="Breadcrumb">
+                            <ol class="flex items-center space-x-2 text-sm text-white/80">
+                                <li><a href="index.html" class="hover:text-agri-gold transition-colors" data-translate="breadcrumb.home">Home</a></li>
+                                <li><i class="fas fa-chevron-right text-xs" aria-hidden="true"></i></li>
+                                <li><span data-translate="breadcrumb.community">Community</span></li>
+                                <li><i class="fas fa-chevron-right text-xs" aria-hidden="true"></i></li>
+                                <li class="text-agri-gold font-medium" data-translate="breadcrumb.discussion_forum">Discussion Forum</li>
+                            </ol>
+                        </nav>
+                        
+                        <h1 class="text-5xl lg:text-7xl font-bold mb-6 text-shadow leading-tight">
+                            <span data-translate="hero.join">Join the</span><br>
+                            <span class="text-agri-gold" data-translate="hero.global">Global</span> <span data-translate="hero.farming">Farming</span><br>
+                            <span class="text-amber-200" data-translate="hero.conversation">Conversation</span>
+                        </h1>
+                        <p class="text-xl lg:text-2xl mb-8 text-gray-100 dark:text-gray-200 leading-relaxed">
+                            <span data-translate="hero.description">Connect with thousands of farmers worldwide, share knowledge, solve challenges together, and learn from the collective wisdom of our agricultural community.</span>
+                        </p>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                            <button class="bg-agri-gold hover:bg-agri-accent text-gray-900 font-semibold px-8 py-4 rounded-full text-lg transition-all hover:scale-105 shadow-lg glow-on-hover focus:outline-none focus:ring-2 focus:ring-agri-gold">
+                                <i class="fas fa-user-plus mr-2" aria-hidden="true"></i><span data-translate="cta.join_community">Join Community</span>
+                            </button>
+                            <button class="border-2 border-white text-white hover:bg-white hover:text-agri-green font-semibold px-8 py-4 rounded-full text-lg transition-all focus:outline-none focus:ring-2 focus:ring-white">
+                                <i class="fas fa-eye mr-2" aria-hidden="true"></i><span data-translate="cta.explore_forum">Explore Forum</span>
+                            </button>
+                        </div>
+
+                        <!-- Community Statistics -->
+                        <div class="grid grid-cols-3 gap-6 mt-12">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-agri-gold counter" data-target="125000">0</div>
+                                <div class="text-sm text-gray-200 dark:text-gray-300" data-translate="stats.active_members">Active Members</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-agri-gold counter" data-target="50000">0</div>
+                                <div class="text-sm text-gray-200 dark:text-gray-300" data-translate="stats.discussions">Discussions</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-agri-gold counter" data-target="200">0</div>
+                                <div class="text-sm text-gray-200 dark:text-gray-300" data-translate="stats.countries">Countries</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Content - Forum Preview -->
+                    <div class="space-y-6" data-aos="fade-left">
+                        <!-- Forum Activity Widget -->
+                        <div class="forum-card rounded-2xl p-6 text-gray-900 dark:text-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold" data-translate="widget.recent_activity">Recent Forum Activity</h3>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                                    <span class="text-sm" data-translate="widget.live_discussions">Live Discussions</span>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="user-avatar w-10 h-10" style="--avatar-color-1: #4CAF50; --avatar-color-2: #2F7D32;">
+                                        <span class="text-sm">RK</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-sm" data-translate="widget.post1.title">Best organic fertilizers for tomatoes?</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">by Raj Kumar • 5 minutes ago</div>
+                                        <div class="flex items-center space-x-3 text-xs">
+                                            <span class="flex items-center text-green-600"><i class="fas fa-thumbs-up mr-1"></i>12</span>
+                                            <span class="flex items-center text-blue-600"><i class="fas fa-reply mr-1"></i>8 replies</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="user-avatar w-10 h-10" style="--avatar-color-1: #1976D2; --avatar-color-2: #0D47A1;">
+                                        <span class="text-sm">MS</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-sm" data-translate="widget.post2.title">Climate change impact on wheat yields</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">by Maria Santos • 12 minutes ago</div>
+                                        <div class="flex items-center space-x-3 text-xs">
+                                            <span class="flex items-center text-green-600"><i class="fas fa-thumbs-up mr-1"></i>25</span>
+                                            <span class="flex items-center text-blue-600"><i class="fas fa-reply mr-1"></i>15 replies</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="user-avatar w-10 h-10" style="--avatar-color-1: #7C3AED; --avatar-color-2: #5B21B6;">
+                                        <span class="text-sm">JL</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-sm" data-translate="widget.post3.title">Successful drip irrigation setup guide</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">by John Lee • 1 hour ago</div>
+                                        <div class="flex items-center space-x-3 text-xs">
+                                            <span class="flex items-center text-green-600"><i class="fas fa-thumbs-up mr-1"></i>18</span>
+                                            <span class="flex items-center text-blue-600"><i class="fas fa-reply mr-1"></i>22 replies</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Access Actions -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="glass-effect rounded-xl p-4 text-white text-center hover:bg-white/20 dark:hover:bg-agri-night/60 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-agri-light" tabindex="0" role="button">
+                                <i class="fas fa-question-circle text-2xl mb-2 text-agri-gold" aria-hidden="true"></i>
+                                <div class="font-semibold" data-translate="widget.ask_question">Ask Question</div>
+                            </div>
+                            <div class="glass-effect rounded-xl p-4 text-white text-center hover:bg-white/20 dark:hover:bg-agri-night/60 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-agri-light" tabindex="0" role="button">
+                                <i class="fas fa-search text-2xl mb-2 text-agri-gold" aria-hidden="true"></i>
+                                <div class="font-semibold" data-translate="widget.search_topics">Search Topics</div>
+                            </div>
+                        </div>
+
+                        <!-- Forum Preview Search -->
+                        <div class="glass-effect rounded-full p-2">
+                            <div class="flex items-center">
+                                <input type="text" placeholder="Search forum discussions..." 
+                                       class="flex-1 bg-transparent text-white placeholder-gray-300 dark:placeholder-gray-400 px-4 py-2 focus:outline-none text-base"
+                                       id="hero-search"
+                                       data-translate-placeholder="widget.search_discussions">
+                                <button class="bg-agri-gold hover:bg-agri-accent text-gray-900 p-3 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-agri-gold" aria-label="Search forum">
+                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce" aria-hidden="true">
+                <div class="flex flex-col items-center">
+                    <span class="text-sm mb-2" data-translate="scroll.explore">Discover how our forum works</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-20 bg-white dark:bg-agri-night">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                        <span data-translate="how_it_works.title">How Our Forum Works</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto">
+                        <span data-translate="how_it_works.description">Our discussion forum is designed to facilitate meaningful conversations between farmers, experts, and agricultural enthusiasts from around the world.</span>
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-4 gap-8">
+                    <!-- Step 1: Join -->
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                        <div class="step-number mx-auto mb-6 glow-on-hover">
+                            <span>1</span>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4" data-translate="steps.step1.title">Create Your Profile</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6" data-translate="steps.step1.description">
+                            Sign up for free and create your farmer profile. Share your location, crops, and farming interests to connect with relevant discussions.
+                        </p>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-center text-sm text-agri-green">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step1.feature1">Free registration</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-green">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step1.feature2">Customizable profile</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-green">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step1.feature3">Interest matching</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Explore -->
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                        <div class="step-number mx-auto mb-6 glow-on-hover">
+                            <span>2</span>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4" data-translate="steps.step2.title">Explore Categories</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6" data-translate="steps.step2.description">
+                            Browse organized categories covering crops, livestock, technology, markets, and more. Find discussions relevant to your farming needs.
+                        </p>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-center text-sm text-agri-blue">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step2.feature1">Organized categories</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-blue">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step2.feature2">Smart search</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-blue">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step2.feature3">Topic recommendations</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Engage -->
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                        <div class="step-number mx-auto mb-6 glow-on-hover">
+                            <span>3</span>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4" data-translate="steps.step3.title">Ask & Answer</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6" data-translate="steps.step3.description">
+                            Post questions, share experiences, and provide answers. Our community thrives on mutual support and knowledge sharing.
+                        </p>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-center text-sm text-agri-accent">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step3.feature1">Rich text editor</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-accent">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step3.feature2">Image attachments</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-accent">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step3.feature3">Expert verification</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Learn -->
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="400">
+                        <div class="step-number mx-auto mb-6 glow-on-hover">
+                            <span>4</span>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4" data-translate="steps.step4.title">Learn & Grow</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6" data-translate="steps.step4.description">
+                            Build your reputation, earn badges, and access exclusive content. The more you contribute, the more you benefit from our community.
+                        </p>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-center text-sm text-agri-purple">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step4.feature1">Reputation system</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-purple">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step4.feature2">Achievement badges</span>
+                            </div>
+                            <div class="flex items-center justify-center text-sm text-agri-purple">
+                                <i class="fas fa-check mr-2" aria-hidden="true"></i><span data-translate="steps.step4.feature3">Expert access</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forum Categories Section -->
+        <section id="forum-categories" class="py-20 bg-gradient-to-br from-green-50 to-blue-50 dark:from-agri-night dark:to-agri-night-light">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                        <span data-translate="categories.title">Explore Forum Categories</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                        <span data-translate="categories.description">Our forum is organized into specialized categories to help you find exactly the information and community you need.</span>
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Category 1: Crop Farming -->
+                    <div class="forum-card rounded-2xl p-6 shadow-xl" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flex items-center mb-4">
+                            <div class="category-icon w-16 h-16 rounded-full flex items-center justify-center mr-4" style="--icon-color-1: #4CAF50; --icon-color-2: #2F7D32;">
+                                <i class="fas fa-seedling text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-translate="category1.title">Crop Farming</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" data-translate="category1.posts">12,450 discussions</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="category1.description">
+                            Share experiences about crop varieties, planting techniques, pest management, and harvest optimization strategies.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-2 py-1 rounded" data-translate="category1.tag1">Organic Farming</span>
+                            <span class="text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-2 py-1 rounded" data-translate="category1.tag2">Pest Control</span>
+                            <span class="text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-2 py-1 rounded" data-translate="category1.tag3">Soil Health</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span data-translate="category1.active_today">234 active today</span>
+                            <span data-translate="category1.latest">Latest: 2 min ago</span>
+                        </div>
+                    </div>
+
+                    <!-- Category 2: Livestock -->
+                    <div class="forum-card rounded-2xl p-6 shadow-xl" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center mb-4">
+                            <div class="category-icon w-16 h-16 rounded-full flex items-center justify-center mr-4" style="--icon-color-1: #8D6E63; --icon-color-2: #5D4037;">
+                                <i class="fas fa-cow text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-translate="category2.title">Livestock & Poultry</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" data-translate="category2.posts">8,320 discussions</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="category2.description">
+                            Discuss animal husbandry, feeding strategies, breeding programs, and health management for all types of livestock.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="text-xs bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-2 py-1 rounded" data-translate="category2.tag1">Cattle</span>
+                            <span class="text-xs bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-2 py-1 rounded" data-translate="category2.tag2">Poultry</span>
+                            <span class="text-xs bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-2 py-1 rounded" data-translate="category2.tag3">Animal Health</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span data-translate="category2.active_today">156 active today</span>
+                            <span data-translate="category2.latest">Latest: 8 min ago</span>
+                        </div>
+                    </div>
+
+                    <!-- Category 3: Technology -->
+                    <div class="forum-card rounded-2xl p-6 shadow-xl" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex items-center mb-4">
+                            <div class="category-icon w-16 h-16 rounded-full flex items-center justify-center mr-4" style="--icon-color-1: #1976D2; --icon-color-2: #0D47A1;">
+                                <i class="fas fa-laptop text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-translate="category3.title">Farm Technology</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" data-translate="category3.posts">6,890 discussions</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="category3.description">
+                            Explore the latest in agricultural technology, from GPS tractors to drone monitoring and smart irrigation systems.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-2 py-1 rounded" data-translate="category3.tag1">Precision Ag</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-2 py-1 rounded" data-translate="category3.tag2">Drones</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-2 py-1 rounded" data-translate="category3.tag3">IoT Sensors</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span data-translate="category3.active_today">89 active today</span>
+                            <span data-translate="category3.latest">Latest: 15 min ago</span>
+                        </div>
+                    </div>
+
+                    <!-- Category 4: Climate & Weather -->
+                    <div class="forum-card rounded-2xl p-6 shadow-xl" data-aos="fade-up" data-aos-delay="400">
+                        <div class="flex items-center mb-4">
+                            <div class="category-icon w-16 h-16 rounded-full flex items-center justify-center mr-4" style="--icon-color-1: #87CEEB; --icon-color-2: #1976D2;">
+                                <i class="fas fa-cloud-sun text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-translate="category4.title">Climate & Weather</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" data-translate="category4.posts">9,560 discussions</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="category4.description">
+                            Discuss climate adaptation strategies, weather patterns, and resilient farming practices for changing conditions.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="text-xs bg-sky-100 dark:bg-sky-900/20 text-sky-800 dark:text-sky-300 px-2 py-1 rounded" data-translate="category4.tag1">Climate Change</span>
+                            <span class="text-xs bg-sky-100 dark:bg-sky-900/20 text-sky-800 dark:text-sky-300 px-2 py-1 rounded" data-translate="category4.tag2">Drought</span>
+                            <span class="text-xs bg-sky-100 dark:bg-sky-900/20 text-sky-800 dark:text-sky-300 px-2 py-1 rounded" data-translate="category4.tag3">Resilience</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span data-translate="category4.active_today">178 active today</span>
+                            <span data-translate="category4.latest">Latest: 3 min ago</span>
+                        </div>
+                    </div>
+
+                    <!-- Category 5: Market & Business -->
+                    <div class="forum-card rounded-2xl p-6 shadow-xl" data-aos="fade-up" data-aos-delay="500">
+                        <div class="flex items-center mb-4">
+                            <div class="category-icon w-16 h-16 rounded-full flex items-center justify-center mr-4" style="--icon-color-1: #FF8F00; --icon-color-2: #E65100;">
+                                <i class="fas fa-chart-line text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-translate="category5.title">Markets & Business</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" data-translate="category5.posts">7,230 discussions</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="category5.description">
+                            Share insights about pricing trends, marketing strategies, and agricultural business management techniques.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="text-xs bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-2 py-1 rounded" data-translate="category5.tag1">Pricing</span>
+                            <span class="text-xs bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-2 py-1 rounded" data-translate="category5.tag2">Marketing</span>
+                            <span class="text-xs bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-2 py-1 rounded" data-translate="category5.tag3">Finance</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span data-translate="category5.active_today">203 active today</span>
+                            <span data-translate="category5.latest">Latest: 1 min ago</span>
+                        </div>
+                    </div>
+
+                    <!-- Category 6: Beginner's Corner -->
+                    <div class="forum-card rounded-2xl p-6 shadow-xl" data-aos="fade-up" data-aos-delay="600">
+                        <div class="flex items-center mb-4">
+                            <div class="category-icon w-16 h-16 rounded-full flex items-center justify-center mr-4" style="--icon-color-1: #7C3AED; --icon-color-2: #5B21B6;">
+                                <i class="fas fa-graduation-cap text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-translate="category6.title">Beginner's Corner</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" data-translate="category6.posts">15,670 discussions</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="category6.description">
+                            A welcoming space for new farmers to ask basic questions and get supportive guidance from experienced community members.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300 px-2 py-1 rounded" data-translate="category6.tag1">Getting Started</span>
+                            <span class="text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300 px-2 py-1 rounded" data-translate="category6.tag2">Basic Tips</span>
+                            <span class="text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300 px-2 py-1 rounded" data-translate="category6.tag3">Mentorship</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span data-translate="category6.active_today">445 active today</span>
+                            <span data-translate="category6.latest">Latest: 30 sec ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forum Benefits Section -->
+        <section id="forum-benefits" class="py-20 bg-white dark:bg-agri-night">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                        <span data-translate="benefits.title">Why Join Our Forum?</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                        <span data-translate="benefits.description">Experience the power of community-driven learning and support that has helped thousands of farmers achieve success.</span>
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <!-- Benefits List -->
+                    <div class="space-y-8" data-aos="fade-right">
+                        <div class="flex items-start space-x-4">
+                            <div class="benefit-icon w-16 h-16 rounded-full flex items-center justify-center">
+                                <i class="fas fa-lightbulb text-agri-green text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-translate="benefit1.title">Instant Expert Advice</h3>
+                                <p class="text-gray-600 dark:text-gray-300" data-translate="benefit1.description">
+                                    Get answers to your farming questions from experienced farmers and certified agricultural experts within hours, not days.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="benefit-icon w-16 h-16 rounded-full flex items-center justify-center">
+                                <i class="fas fa-globe text-agri-blue text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-translate="benefit2.title">Global Knowledge Exchange</h3>
+                                <p class="text-gray-600 dark:text-gray-300" data-translate="benefit2.description">
+                                    Learn from farmers across 200+ countries, discover new techniques, and adapt successful practices to your local conditions.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="benefit-icon w-16 h-16 rounded-full flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-agri-accent text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-translate="benefit3.title">Verified Information</h3>
+                                <p class="text-gray-600 dark:text-gray-300" data-translate="benefit3.description">
+                                    All advice is moderated by agricultural experts and verified for accuracy, ensuring you receive reliable guidance.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="benefit-icon w-16 h-16 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-agri-purple text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-translate="benefit4.title">24/7 Active Community</h3>
+                                <p class="text-gray-600 dark:text-gray-300" data-translate="benefit4.description">
+                                    With members across all time zones, there's always someone online to help with urgent farming questions and emergencies.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Forum Preview -->
+                    <div class="space-y-6" data-aos="fade-left">
+                        <div class="forum-preview rounded-2xl p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+                                <i class="fas fa-fire mr-2 text-red-500" aria-hidden="true"></i><span data-translate="preview.trending_discussions">Trending Discussions</span>
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Sample Discussion 1 -->
+                                <div class="flex items-start space-x-3 p-4 bg-white dark:bg-agri-night-light rounded-lg border border-gray-200 dark:border-gray-600">
+                                    <div class="user-avatar w-12 h-12" style="--avatar-color-1: #4CAF50; --avatar-color-2: #2F7D32;">
+                                        <span>R</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-medium text-gray-900 dark:text-white">Rajesh Patel</span>
+                                            <span class="text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-2 py-1 rounded">Expert Farmer</span>
+                                        </div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white mb-2" data-translate="preview.post1.title">How to transition to organic farming?</h4>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-3" data-translate="preview.post1.excerpt">Looking for advice on switching from conventional to organic methods. What are the key challenges and timeline?</p>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                                            <span class="flex items-center"><i class="fas fa-thumbs-up mr-1 text-green-500"></i>24 helpful</span>
+                                            <span class="flex items-center"><i class="fas fa-reply mr-1 text-blue-500"></i>18 replies</span>
+                                            <span class="flex items-center"><i class="fas fa-clock mr-1 text-gray-400"></i>2 hours ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sample Discussion 2 -->
+                                <div class="flex items-start space-x-3 p-4 bg-white dark:bg-agri-night-light rounded-lg border border-gray-200 dark:border-gray-600">
+                                    <div class="user-avatar w-12 h-12" style="--avatar-color-1: #1976D2; --avatar-color-2: #0D47A1;">
+                                        <span>M</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-medium text-gray-900 dark:text-white">Maria Garcia</span>
+                                            <span class="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">Crop Specialist</span>
+                                        </div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white mb-2" data-translate="preview.post2.title">Drought-resistant wheat varieties?</h4>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-3" data-translate="preview.post2.excerpt">With climate changes in our region, which wheat varieties perform best under drought conditions?</p>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                                            <span class="flex items-center"><i class="fas fa-thumbs-up mr-1 text-green-500"></i>31 helpful</span>
+                                            <span class="flex items-center"><i class="fas fa-reply mr-1 text-blue-500"></i>22 replies</span>
+                                            <span class="flex items-center"><i class="fas fa-clock mr-1 text-gray-400"></i>4 hours ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sample Discussion 3 -->
+                                <div class="flex items-start space-x-3 p-4 bg-white dark:bg-agri-night-light rounded-lg border border-gray-200 dark:border-gray-600">
+                                    <div class="user-avatar w-12 h-12" style="--avatar-color-1: #7C3AED; --avatar-color-2: #5B21B6;">
+                                        <span>K</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-medium text-gray-900 dark:text-white">Kwame Asante</span>
+                                            <span class="text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300 px-2 py-1 rounded">Livestock Expert</span>
+                                        </div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white mb-2" data-translate="preview.post3.title">Successful goat breeding program</h4>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-3" data-translate="preview.post3.excerpt">Sharing my 5-year goat breeding results and lessons learned. Happy to answer questions!</p>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                                            <span class="flex items-center"><i class="fas fa-thumbs-up mr-1 text-green-500"></i>42 helpful</span>
+                                            <span class="flex items-center"><i class="fas fa-reply mr-1 text-blue-500"></i>35 replies</span>
+                                            <span class="flex items-center"><i class="fas fa-clock mr-1 text-gray-400"></i>6 hours ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Forum Stats -->
+                        <div class="forum-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4" data-translate="preview.community_stats">Community Impact</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-agri-green counter" data-target="98">0</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400" data-translate="preview.satisfaction">% Satisfaction Rate</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-agri-blue counter" data-target="4">0</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400" data-translate="preview.response_time">min Avg Response</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-agri-accent counter" data-target="87">0</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400" data-translate="preview.problem_solved">% Problems Solved</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-agri-purple counter" data-target="24">0</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400" data-translate="preview.hours_active">hrs Daily Activity</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Guidelines Section -->
+        <section id="community-guidelines" class="py-20 bg-gradient-to-br from-blue-50 to-green-50 dark:from-agri-night dark:to-agri-night-light">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                        <span data-translate="guidelines.title">Community Guidelines</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                        <span data-translate="guidelines.description">Our forum thrives on mutual respect, helpful contributions, and constructive dialogue. Here's how we maintain a positive environment for everyone.</span>
+                    </p>
+                </div>
+
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid md:grid-cols-2 gap-8" data-aos="fade-up">
+                        <!-- Do's -->
+                        <div class="forum-card rounded-2xl p-8 shadow-xl">
+                            <div class="text-center mb-6">
+                                <div class="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-check-circle text-green-600 text-2xl" aria-hidden="true"></i>
+                                </div>
+                                <h3 class="text-2xl font-semibold text-gray-900 dark:text-white" data-translate="guidelines.dos_title">Community Do's</h3>
+                            </div>
+                            
+                            <ul class="space-y-3">
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-check text-green-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.do1">Be respectful and supportive to all members</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-check text-green-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.do2">Share practical experiences and proven solutions</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-check text-green-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.do3">Use clear, descriptive titles for your posts</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-check text-green-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.do4">Include photos when helpful for context</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-check text-green-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.do5">Credit sources and acknowledge help received</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-check text-green-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.do6">Search before posting to avoid duplicates</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Don'ts -->
+                        <div class="forum-card rounded-2xl p-8 shadow-xl">
+                            <div class="text-center mb-6">
+                                <div class="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-times-circle text-red-600 text-2xl" aria-hidden="true"></i>
+                                </div>
+                                <h3 class="text-2xl font-semibold text-gray-900 dark:text-white" data-translate="guidelines.donts_title">Community Don'ts</h3>
+                            </div>
+                            
+                            <ul class="space-y-3">
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-times text-red-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.dont1">Post spam, advertising, or promotional content</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-times text-red-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.dont2">Share unverified medical advice for animals</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-times text-red-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.dont3">Use offensive language or personal attacks</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-times text-red-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.dont4">Share copyrighted content without permission</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-times text-red-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.dont5">Post off-topic or irrelevant discussions</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-times text-red-600 mt-1" aria-hidden="true"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" data-translate="guidelines.dont6">Share personal contact information publicly</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Join CTA -->
+                    <div class="text-center mt-12" data-aos="fade-up">
+                        <div class="forum-card rounded-2xl p-8 shadow-xl">
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4" data-translate="join_cta.title">Ready to Join the Conversation?</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6" data-translate="join_cta.description">
+                                Become part of the world's largest agricultural knowledge-sharing community. It's free, welcoming, and always helpful.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                <button class="bg-agri-green hover:bg-agri-dark text-white px-8 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green font-semibold">
+                                    <i class="fas fa-user-plus mr-2" aria-hidden="true"></i><span data-translate="join_cta.create_account">Create Free Account</span>
+                                </button>
+                                <button class="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-8 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                    <i class="fas fa-eye mr-2" aria-hidden="true"></i><span data-translate="join_cta.browse_first">Browse as Guest</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 dark:bg-black text-white py-16" role="contentinfo">
+        <div class="container mx-auto px-4">
+            <div class="grid lg:grid-cols-4 gap-8 mb-12">
+                <!-- Company Info -->
+                <div class="lg:col-span-2">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-agri-green to-agri-light rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-seedling text-white text-xl" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">AgriClimate Connect</h3>
+                            <p class="text-sm text-gray-400" data-translate="footer.tagline">Global Farming Community</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-6 max-w-md" data-translate="footer.description">
+                        Building the world's most supportive and knowledgeable agricultural community where farmers help farmers succeed through shared wisdom and experience.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-agri-green rounded-full flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green" aria-label="Facebook">
+                            <i class="fab fa-facebook" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-agri-green rounded-full flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green" aria-label="Twitter">
+                            <i class="fab fa-twitter" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-agri-green rounded-full flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-agri-green rounded-full flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green" aria-label="YouTube">
+                            <i class="fab fa-youtube" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Forum Categories -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6" data-translate="footer.popular_categories">Popular Categories</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.crop_farming">Crop Farming</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.livestock">Livestock & Poultry</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.technology">Farm Technology</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.climate">Climate & Weather</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.business">Markets & Business</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.beginners">Beginner's Corner</a></li>
+                    </ul>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6" data-translate="footer.quick_links">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.home">Home</a></li>
+                        <li><a href="#how-it-works" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.how_it_works">How It Works</a></li>
+                        <li><a href="#forum-categories" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.categories">Categories</a></li>
+                        <li><a href="#community-guidelines" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.guidelines">Community Guidelines</a></li>
+                        <li><a href="events.html" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.events">Events & Training</a></li>
+                        <li><a href="index.html#contact" class="text-gray-300 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.contact">Contact Moderators</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="bg-gray-800 dark:bg-gray-900 rounded-2xl p-8 mb-8">
+                <div class="grid md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <h4 class="text-xl font-semibold mb-2" data-translate="footer.newsletter_title">Forum Digest</h4>
+                        <p class="text-gray-300" data-translate="footer.newsletter_description">Get weekly summaries of the most helpful discussions, expert answers, and trending topics in our forum.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="email" placeholder="Enter your email" 
+                               class="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-agri-green text-base text-white placeholder-gray-400"
+                               data-translate-placeholder="footer.email_placeholder">
+                        <button class="bg-agri-green hover:bg-agri-dark text-white px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green">
+                            <span data-translate="footer.subscribe">Subscribe</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Footer -->
+            <div class="border-t border-gray-800 pt-8">
+                <div class="grid md:grid-cols-2 gap-4 items-center">
+                    <div class="text-gray-400 text-sm">
+                        <span data-translate="footer.copyright">© 2024 AgriClimate Connect. All rights reserved.</span>
+                    </div>
+                    <div class="flex flex-wrap justify-end space-x-6 text-sm">
+                        <a href="#" class="text-gray-400 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.privacy">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.terms">Terms of Service</a>
+                        <a href="#" class="text-gray-400 hover:text-agri-light transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green rounded" data-translate="footer.accessibility">Accessibility</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Fixed Chat Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button id="chat-toggle" class="w-16 h-16 bg-gradient-to-r from-agri-green to-agri-light text-white rounded-full shadow-lg hover:scale-110 transition-all flex items-center justify-center glow-on-hover focus:outline-none focus:ring-2 focus:ring-agri-green" aria-label="Open forum support chat">
+            <i class="fas fa-comments text-xl" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <!-- Chat Widget -->
+    <div id="chat-widget" class="fixed bottom-24 right-6 w-96 h-96 bg-white dark:bg-agri-night rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 transform scale-0 origin-bottom-right transition-transform z-50">
+        <div class="h-full flex flex-col">
+            <!-- Chat Header -->
+            <div class="bg-gradient-to-r from-agri-green to-agri-light text-white p-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-comments" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold" data-translate="chat.title">Forum Guide</h4>
+                            <p class="text-xs opacity-75" data-translate="chat.subtitle">Your Community Helper</p>
+                        </div>
+                    </div>
+                    <button id="chat-close" class="hover:bg-white/20 p-1 rounded focus:outline-none focus:ring-2 focus:ring-white" aria-label="Close chat">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div class="flex-1 p-4 overflow-y-auto" id="chat-messages" role="log" aria-live="polite" aria-label="Chat messages">
+                <div class="flex items-start space-x-2 mb-4">
+                    <div class="w-6 h-6 bg-agri-green rounded-full flex items-center justify-center text-white text-xs">
+                        <i class="fas fa-comments" aria-hidden="true"></i>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-xs">
+                        <p class="text-sm text-gray-900 dark:text-white" data-translate="chat.welcome">Hi! I can help you understand how our forum works, find the right categories, and guide you through getting started. What would you like to know?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Input -->
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex space-x-2">
+                    <input type="text" 
+                           placeholder="Ask about the forum..."
+                           class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-agri-green text-sm text-gray-900 dark:text-white dark:bg-gray-800"
+                           id="widget-chat-input"
+                           data-translate-placeholder="chat.input_placeholder">
+                    <button class="bg-agri-green hover:bg-agri-dark text-white px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-agri-green" id="widget-send-chat" aria-label="Send message">
+                        <i class="fas fa-paper-plane text-sm" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Translation data for Discussion Forum
+        const translations = {
+            en: {
+                'nav.home': 'Home',
+                'nav.knowledge_tools': 'Knowledge Tools',
+                'nav.weather_climate': 'Weather & Climate Intelligence',
+                'nav.crop_advisory': 'Smart Crop Advisory',
+                'nav.livestock': 'Livestock Management',
+                'nav.market_hub': 'Market Intelligence',
+                'nav.ai_tools': 'AI-Powered Tools',
+                'nav.community': 'Community',
+                'nav.discussion_forum': 'Discussion Forum',
+                'nav.events_training': 'Events & Training',
+                'nav.farmer_network': 'Farmer Network',
+                'nav.forums': 'Discussion Forums',
+                'nav.success_stories': 'Success Stories',
+                'nav.about': 'About Us',
+                'nav.contact': 'Contact Us',
+                'cta.join_forum': 'Join Forum',
+                'breadcrumb.home': 'Home',
+                'breadcrumb.community': 'Community',
+                'breadcrumb.discussion_forum': 'Discussion Forum',
+                'hero.join': 'Join the',
+                'hero.global': 'Global',
+                'hero.farming': 'Farming',
+                'hero.conversation': 'Conversation',
+                'hero.description': 'Connect with thousands of farmers worldwide, share knowledge, solve challenges together, and learn from the collective wisdom of our agricultural community.',
+                'cta.join_community': 'Join Community',
+                'cta.explore_forum': 'Explore Forum',
+                'stats.active_members': 'Active Members',
+                'stats.discussions': 'Discussions',
+                'stats.countries': 'Countries',
+                'widget.recent_activity': 'Recent Forum Activity',
+                'widget.live_discussions': 'Live Discussions',
+                'widget.ask_question': 'Ask Question',
+                'widget.search_topics': 'Search Topics',
+                'widget.search_discussions': 'Search forum discussions...',
+                'scroll.explore': 'Discover how our forum works',
+                'how_it_works.title': 'How Our Forum Works',
+                'how_it_works.description': 'Our discussion forum is designed to facilitate meaningful conversations between farmers, experts, and agricultural enthusiasts from around the world.',
+                'steps.step1.title': 'Create Your Profile',
+                'steps.step1.description': 'Sign up for free and create your farmer profile. Share your location, crops, and farming interests to connect with relevant discussions.',
+                'steps.step1.feature1': 'Free registration',
+                'steps.step1.feature2': 'Customizable profile',
+                'steps.step1.feature3': 'Interest matching',
+                'steps.step2.title': 'Explore Categories',
+                'steps.step2.description': 'Browse organized categories covering crops, livestock, technology, markets, and more. Find discussions relevant to your farming needs.',
+                'steps.step2.feature1': 'Organized categories',
+                'steps.step2.feature2': 'Smart search',
+                'steps.step2.feature3': 'Topic recommendations',
+                'steps.step3.title': 'Ask & Answer',
+                'steps.step3.description': 'Post questions, share experiences, and provide answers. Our community thrives on mutual support and knowledge sharing.',
+                'steps.step3.feature1': 'Rich text editor',
+                'steps.step3.feature2': 'Image attachments',
+                'steps.step3.feature3': 'Expert verification',
+                'steps.step4.title': 'Learn & Grow',
+                'steps.step4.description': 'Build your reputation, earn badges, and access exclusive content. The more you contribute, the more you benefit from our community.',
+                'steps.step4.feature1': 'Reputation system',
+                'steps.step4.feature2': 'Achievement badges',
+                'steps.step4.feature3': 'Expert access',
+                'chat.title': 'Forum Guide',
+                'chat.subtitle': 'Your Community Helper',
+                'chat.welcome': 'Hi! I can help you understand how our forum works, find the right categories, and guide you through getting started. What would you like to know?',
+                'chat.input_placeholder': 'Ask about the forum...'
+            },
+            es: {
+                'nav.home': 'Inicio',
+                'nav.knowledge_tools': 'Herramientas de Conocimiento',
+                'nav.community': 'Comunidad',
+                'nav.discussion_forum': 'Foro de Discusión',
+                'nav.events_training': 'Eventos y Capacitación',
+                'nav.about': 'Acerca de',
+                'nav.contact': 'Contacto',
+                'cta.join_forum': 'Únete al Foro',
+                'breadcrumb.home': 'Inicio',
+                'breadcrumb.community': 'Comunidad',
+                'breadcrumb.discussion_forum': 'Foro de Discusión',
+                'hero.join': 'Únete a la',
+                'hero.global': 'Conversación',
+                'hero.farming': 'Agrícola',
+                'hero.conversation': 'Global',
+                'hero.description': 'Conéctate con miles de agricultores en todo el mundo, comparte conocimiento, resuelve desafíos juntos y aprende de la sabiduría colectiva de nuestra comunidad agrícola.',
+                'cta.join_community': 'Únete a la Comunidad',
+                'cta.explore_forum': 'Explorar Foro',
+                'stats.active_members': 'Miembros Activos',
+                'stats.discussions': 'Discusiones',
+                'stats.countries': 'Países',
+                'widget.recent_activity': 'Actividad Reciente del Foro',
+                'widget.live_discussions': 'Discusiones en Vivo',
+                'widget.ask_question': 'Hacer Pregunta',
+                'widget.search_topics': 'Buscar Temas',
+                'widget.search_discussions': 'Buscar discusiones del foro...',
+                'scroll.explore': 'Descubre cómo funciona nuestro foro',
+                'how_it_works.title': 'Cómo Funciona Nuestro Foro',
+                'how_it_works.description': 'Nuestro foro de discusión está diseñado para facilitar conversaciones significativas entre agricultores, expertos y entusiastas agrícolas de todo el mundo.',
+                'chat.title': 'Guía del Foro',
+                'chat.subtitle': 'Tu Ayudante Comunitario',
+                'chat.welcome': '¡Hola! Puedo ayudarte a entender cómo funciona nuestro foro, encontrar las categorías correctas y guiarte para comenzar. ¿Qué te gustaría saber?',
+                'chat.input_placeholder': 'Pregunta sobre el foro...'
+            },
+            fr: {
+                'nav.home': 'Accueil',
+                'nav.knowledge_tools': 'Outils de Connaissance',
+                'nav.community': 'Communauté',
+                'nav.discussion_forum': 'Forum de Discussion',
+                'nav.events_training': 'Événements et Formation',
+                'nav.about': 'À Propos',
+                'nav.contact': 'Contact',
+                'cta.join_forum': 'Rejoindre le Forum',
+                'breadcrumb.home': 'Accueil',
+                'breadcrumb.community': 'Communauté',
+                'breadcrumb.discussion_forum': 'Forum de Discussion',
+                'hero.join': 'Rejoignez la',
+                'hero.global': 'Conversation',
+                'hero.farming': 'Agricole',
+                'hero.conversation': 'Mondiale',
+                'hero.description': 'Connectez-vous avec des milliers d\'agriculteurs dans le monde, partagez des connaissances, résolvez des défis ensemble et apprenez de la sagesse collective de notre communauté agricole.',
+                'cta.join_community': 'Rejoindre la Communauté',
+                'cta.explore_forum': 'Explorer le Forum',
+                'stats.active_members': 'Membres Actifs',
+                'stats.discussions': 'Discussions',
+                'stats.countries': 'Pays',
+                'widget.recent_activity': 'Activité Récente du Forum',
+                'widget.live_discussions': 'Discussions en Direct',
+                'widget.ask_question': 'Poser une Question',
+                'widget.search_topics': 'Rechercher des Sujets',
+                'widget.search_discussions': 'Rechercher discussions du forum...',
+                'scroll.explore': 'Découvrez comment fonctionne notre forum',
+                'how_it_works.title': 'Comment Notre Forum Fonctionne',
+                'how_it_works.description': 'Notre forum de discussion est conçu pour faciliter des conversations significatives entre agriculteurs, experts et passionnés agricoles du monde entier.',
+                'chat.title': 'Guide du Forum',
+                'chat.subtitle': 'Votre Assistant Communautaire',
+                'chat.welcome': 'Salut! Je peux vous aider à comprendre comment fonctionne notre forum, trouver les bonnes catégories et vous guider pour commencer. Que souhaitez-vous savoir?',
+                'chat.input_placeholder': 'Demandez sur le forum...'
+            }
+        };
+
+        // Current language
+        let currentLanguage = localStorage.getItem('language') || 'en';
+
+        // Initialize AOS (Animate On Scroll)
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
+        // Translation function
+        function translatePage(language) {
+            const elements = document.querySelectorAll('[data-translate]');
+            const placeholderElements = document.querySelectorAll('[data-translate-placeholder]');
+            
+            elements.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[language] && translations[language][key]) {
+                    element.textContent = translations[language][key];
+                }
+            });
+
+            placeholderElements.forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[language] && translations[language][key]) {
+                    element.placeholder = translations[language][key];
+                }
+            });
+
+            currentLanguage = language;
+            localStorage.setItem('language', language);
+            document.documentElement.lang = language;
+        }
+
+        // Dark mode functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const currentTheme = savedTheme || systemTheme;
+
+        if (currentTheme === 'dark') {
+            html.classList.add('dark');
+        }
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme')) {
+                html.classList.toggle('dark', event.matches);
+            }
+        });
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const newTheme = html.classList.contains('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            
+            themeToggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+            }, 150);
+        });
+
+        // High contrast mode
+        let highContrast = false;
+        const contrastToggle = document.getElementById('contrast-toggle');
+
+        contrastToggle.addEventListener('click', () => {
+            highContrast = !highContrast;
+            document.body.classList.toggle('high-contrast', highContrast);
+            localStorage.setItem('highContrast', highContrast);
+            
+            contrastToggle.style.transform = 'rotate(180deg)';
+            setTimeout(() => {
+                contrastToggle.style.transform = '';
+            }, 300);
+        });
+
+        if (localStorage.getItem('highContrast') === 'true') {
+            document.body.classList.add('high-contrast');
+            highContrast = true;
+        }
+
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const hamburgerLines = hamburger.querySelectorAll('.hamburger-line');
+
+        hamburger.addEventListener('click', () => {
+            const isOpen = !mobileMenu.classList.contains('hidden');
+            
+            mobileMenu.classList.toggle('hidden');
+            hamburger.setAttribute('aria-expanded', !isOpen);
+            
+            if (!isOpen) {
+                hamburgerLines[0].style.transform = 'translateY(6px) rotate(45deg)';
+                hamburgerLines[1].style.opacity = '0';
+                hamburgerLines[2].style.transform = 'translateY(-6px) rotate(-45deg)';
+            } else {
+                hamburgerLines.forEach(line => {
+                    line.style.transform = '';
+                    line.style.opacity = '';
+                });
+            }
+        });
+
+        // Text size adjustment
+        let currentTextSize = parseInt(localStorage.getItem('textSize')) || 100;
+        const decreaseTextBtn = document.getElementById('decrease-text');
+        const increaseTextBtn = document.getElementById('increase-text');
+
+        function updateTextSize() {
+            document.body.style.fontSize = currentTextSize + '%';
+            localStorage.setItem('textSize', currentTextSize);
+            
+            decreaseTextBtn.disabled = currentTextSize <= 80;
+            increaseTextBtn.disabled = currentTextSize >= 150;
+        }
+
+        decreaseTextBtn.addEventListener('click', () => {
+            if (currentTextSize > 80) {
+                currentTextSize -= 10;
+                updateTextSize();
+            }
+        });
+
+        increaseTextBtn.addEventListener('click', () => {
+            if (currentTextSize < 150) {
+                currentTextSize += 10;
+                updateTextSize();
+            }
+        });
+
+        updateTextSize();
+
+        // Scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById('scroll-indicator').style.transform = `scaleX(${Math.min(scrolled / 100, 1)})`;
+        });
+
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = parseInt(counter.getAttribute('data-target'));
+                        const duration = 2000;
+                        const increment = target / (duration / 16);
+                        let current = 0;
+                        
+                        const updateCounter = () => {
+                            current += increment;
+                            if (current < target) {
+                                counter.textContent = Math.floor(current).toLocaleString();
+                                requestAnimationFrame(updateCounter);
+                            } else {
+                                counter.textContent = target.toLocaleString();
+                            }
+                        };
+                        
+                        updateCounter();
+                        observer.unobserve(counter);
+                    }
+                });
+            });
+            
+            counters.forEach(counter => observer.observe(counter));
+        }
+
+        // Language selector functionality
+        const languageSelector = document.getElementById('language-selector');
+        languageSelector.value = currentLanguage;
+
+        languageSelector.addEventListener('change', (e) => {
+            const selectedLanguage = e.target.value;
+            translatePage(selectedLanguage);
+            
+            document.body.style.opacity = '0.8';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 200);
+        });
+
+        // Chat functionality
+        const chatToggle = document.getElementById('chat-toggle');
+        const chatWidget = document.getElementById('chat-widget');
+        const chatClose = document.getElementById('chat-close');
+        const widgetChatInput = document.getElementById('widget-chat-input');
+        const widgetSendBtn = document.getElementById('widget-send-chat');
+        const chatMessages = document.getElementById('chat-messages');
+
+        chatToggle.addEventListener('click', () => {
+            const isVisible = !chatWidget.classList.contains('scale-0');
+            chatWidget.classList.toggle('scale-0');
+            
+            if (!isVisible) {
+                setTimeout(() => widgetChatInput.focus(), 300);
+            }
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatWidget.classList.add('scale-0');
+        });
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start space-x-2 mb-4 ${isUser ? 'justify-end' : ''} animate-fade-in`;
+            
+            messageDiv.innerHTML = `
+                ${!isUser ? '<div class="w-6 h-6 bg-agri-green rounded-full flex items-center justify-center text-white text-xs"><i class="fas fa-comments"></i></div>' : ''}
+                <div class="bg-${isUser ? 'agri-green text-white' : 'gray-100 dark:bg-gray-700'} rounded-lg p-3 max-w-xs shadow-sm">
+                    <p class="text-sm ${isUser ? 'text-white' : 'text-gray-900 dark:text-white'}">${message}</p>
+                </div>
+                ${isUser ? '<div class="w-6 h-6 bg-agri-green rounded-full flex items-center justify-center text-white text-xs"><i class="fas fa-user"></i></div>' : ''}
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function simulateForumAIResponse(userMessage) {
+            const responses = {
+                'how': 'Our forum works in 4 simple steps: 1) Create your free profile, 2) Explore categories that match your interests, 3) Ask questions and share answers, 4) Build reputation and earn badges. It\'s completely free to join!',
+                'join': 'Joining is completely free! Just click "Create Free Account" and fill out a simple profile with your farming interests. You can start participating immediately - no waiting period required.',
+                'categories': 'We have 6 main categories: Crop Farming (12k+ discussions), Livestock & Poultry (8k+), Farm Technology (6k+), Climate & Weather (9k+), Markets & Business (7k+), and Beginner\'s Corner (15k+). Each has specialized subcategories.',
+                'moderation': 'All discussions are moderated by agricultural experts and experienced farmers. We verify advice for accuracy and maintain respectful communication. Posts are typically approved within minutes.',
+                'reputation': 'Our reputation system rewards helpful contributions. You earn points for helpful answers, popular posts, and positive community interactions. Higher reputation unlocks expert features and exclusive content.',
+                'guidelines': 'Our guidelines ensure a positive environment: be respectful, share practical knowledge, use clear titles, include helpful photos, credit sources, and search before posting. We don\'t allow spam, unverified medical advice, or off-topic content.',
+                'mobile': 'Yes! Our forum works perfectly on mobile devices with a responsive design. You can participate in discussions, upload photos, and receive notifications through our mobile app.',
+                'experts': 'We have over 500 verified experts including agricultural scientists, veterinarians, successful farmers, and industry specialists. They\'re marked with special badges and provide expert-verified answers.',
+                'support': 'If you need help, use this chat, check our Help Center, or contact our community moderators. We also have video tutorials for new users and a mentorship program.',
+                'free': 'The forum is completely free to use! This includes all categories, expert access, image uploads, and community features. Some premium training programs have fees, but basic forum participation is always free.',
+                'default': 'I can help you understand how to join, navigate categories, follow guidelines, use features, contact experts, and get the most out of our farming community. What would you like to know?'
+            };
+
+            const lowerMessage = userMessage.toLowerCase();
+            let response = responses.default;
+
+            for (const key in responses) {
+                if (lowerMessage.includes(key)) {
+                    response = responses[key];
+                    break;
+                }
+            }
+
+            setTimeout(() => {
+                addMessage(response);
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function sendMessage(input) {
+            const message = input.value.trim();
+            if (message) {
+                addMessage(message, true);
+                input.value = '';
+                simulateForumAIResponse(message);
+            }
+        }
+
+        widgetSendBtn.addEventListener('click', () => sendMessage(widgetChatInput));
+
+        widgetChatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage(widgetChatInput);
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 80;
+                    const elementPosition = target.offsetTop;
+                    const offsetPosition = elementPosition - offset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Enhanced feature card interactions
+        document.querySelectorAll('.forum-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            translatePage(currentLanguage);
+            animateCounters();
+            
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 100);
+            
+            console.log('AgriClimate Connect - Discussion Forum Community Loaded Successfully!');
+        });
+
+        // Keyboard navigation improvements
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                chatWidget.classList.add('scale-0');
+                mobileMenu.classList.add('hidden');
+            }
+            
+            if (e.key === 'Enter' && e.target.role === 'button') {
+                e.target.click();
+            }
+        });
+    </script>
+</body>
+</html>
